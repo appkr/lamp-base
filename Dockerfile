@@ -56,8 +56,7 @@ RUN sed -i "s/user[\t ]*=.*/user=root/g" /etc/mysql/debian.cnf \
 #-------------------------------------------------------------------------------
 
 # @see https://github.com/docker-library/php/blob/e573f8f7fda5d7378bae9c6a936a298b850c4076/7.0/apache/Dockerfile#L38
-RUN set -ex \
-    && sed -ri 's/^export ([^=]+)=(.*)$/: ${\1:=\2}\nexport \1/' "$APACHE_ENVVARS" \
+RUN sed -ri 's/^export ([^=]+)=(.*)$/: ${\1:=\2}\nexport \1/' "$APACHE_ENVVARS" \
     && . "$APACHE_ENVVARS" \
     && for dir in \
         "$APACHE_LOCK_DIR" \
@@ -72,8 +71,7 @@ RUN set -ex \
 
 RUN a2dissite 000-default \
     && a2ensite default \
-    && usermod -u 1000 www-data \
-    && groupmod -g 1000 www-data
+    && a2enmod rewrite deflate headers 
 
 #-------------------------------------------------------------------------------
 # Run Environment

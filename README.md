@@ -1,15 +1,15 @@
 # LAMP Base Docker Image
 
-## What Is This?
+## 1. What Is This?
 
 LAMP in one container.
 
-## Quick Start
+## 2. Quick Start
 
 To download the already built image from docker hub and run it (You have to provide `<your-container-name>`, `<your-html-dir>`, `<your-mysql-data-dir>`):
 
 ```sh
-~ $ docker run \
+~ $ docker run -d \
     --name <your-container-name> \
     -v `pwd`/<your-html-dir>:/var/www/html \
     -v `pwd`/<your-mysql-data-dir>:/var/lib/mysql \
@@ -21,13 +21,13 @@ To download the already built image from docker hub and run it (You have to prov
 
 If `80` and `3306` ports are available on your host machine, you can map it like `-p 80:80 -p 3306:3306`.
 
-## Test
+## 3. Test
 
 - `http://localhost:8000` to open a index page in document root of apache2.
 - `$ mysql --h127.0.0.1 -uroot -P33060 -p` (Default password: `root`).
 - `http://localhost:9001` to open the supervisor dashboard (Default account: `homestead`/`secret`).
 
-## Build
+## 4. Your Own Build
 
 To build your own image:
 
@@ -42,7 +42,7 @@ To build your own image:
 To run your own build:
 
 ```sh
-~/lamp-base $ docker run \
+~/lamp-base $ docker run -d \
     --name <name-your-container> \
     -v `pwd`/html:/var/www/html \
     -v `pwd`/data:/var/lib/mysql \
@@ -52,19 +52,44 @@ To run your own build:
     <name-your-image>:<tag>
 ```
 
-docker run -d \
-    --name lamp-base \
-    -v `pwd`/html:/var/www/html \
-    -v `pwd`/data:/var/lib/mysql \
-    -p 8000:80 \
-    -p 33060:3306 \
-    -p 9001:9001 \
-    appkr/lamp-base:latest
+## 5. Troubleshooting
 
-## Troubleshooting
 
 While building the Dockerfile, most of the errors were aroused from MySQL.
 
-- The first thing you have to look into is the logs. MySQL log lives in `/var/log/mysql/error.log`
-- "No directory, logging in with HOME=/" This happens when mysql user's home directory is not designated. Run `usermod -d /var/lib/mysql/ mysql` in the docker machine.
-- "Fatal error: Can't open and lock privileges table: Table 'mysql.user' does'nt exists" This happens when there is not `mysql.user` table. Stop the running container, remove all the content of local mounted volume for `/var/lib/mysql`(e.g. `data`), and then restart the container.
+-   The first thing you have to look into is the logs. MySQL log lives in `/var/log/mysql/error.log`
+
+-   "No directory, logging in with HOME=/" This happens when mysql user's home directory is not designated. Run `usermod -d /var/lib/mysql/ mysql` in the docker machine.
+
+-   "Fatal error: Can't open and lock privileges table: Table 'mysql.user' does'nt exists" This happens when there is not `mysql.user` table. Stop the running container, remove all the content of local mounted volume for `/var/lib/mysql`(e.g. `data`), and then restart the container.
+
+-   If `root@%` user was not correctly created:
+
+    ```bash
+    ~/any $ docker exec -it <container_name_or_hash> \
+        mysql -v -e "CREATE USER 'root'@'%' IDENTIFIED BY '${MYSQL_ROOT_PASSWORD}'; GRANT ALL PRIVILEGES ON *.* TO 'root'@'%'; FLUSH PRIVILEGES;"
+    ```
+
+-   If MySql socket was not correctly created:
+
+    ```bash
+    ~/any $ docker exec -it <container_name_or_hash> \
+        supervisorctl stop all \
+        && rm -rf $MYSQL_DATA_DIR/* $MYSQL_PID_DIR \
+        && bash /entrypoint.sh \
+        && supervisorctl restart all
+    ```
+
+-   In most cases, starting from scratch is much easier. To do that run the following commands and re-iterate from the beginning:
+
+    ```bash
+    # Clean up the MySql data directory
+    ~/lemp-base $ rm -rf data/*
+    
+    # Stop running container and remove it
+    ~/any $ docker <container_name_or_hash> && docker rm <container_name_or_hash>
+    
+    # Remove image
+    ~/any $ docker rmi --force <image_name_or_hash>
+    ```
+    
