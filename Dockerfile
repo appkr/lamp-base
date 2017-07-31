@@ -32,10 +32,12 @@ RUN apt-get update \
         php-mcrypt \
         php-mysql \
         php-sqlite3 \
+        php-xdebug \
         php-xml \
         libapache2-mod-php \
         mysql-server \
         mysql-client \
+        vim \
     && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 #-------------------------------------------------------------------------------
