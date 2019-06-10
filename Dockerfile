@@ -1,9 +1,9 @@
-FROM ubuntu:16.04
+FROM ubuntu:18.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV MYSQL_DATA_DIR=/var/lib/mysql
 ENV MYSQL_PID_DIR=/var/run/mysqld
-ENV MYSQL_ROOT_PASSWORD=root
+ENV MYSQL_ROOT_PASSWORD=secret
 ENV APACHE_ENVVARS=/etc/apache2/envvars
 
 #-------------------------------------------------------------------------------
@@ -30,7 +30,6 @@ RUN apt-get update \
         php-curl \
         php-gd \
         php-mbstring \
-        php-mcrypt \
         php-mysql \
         php-sqlite3 \
         php-xdebug \
@@ -80,14 +79,14 @@ RUN sed -ri 's/^export ([^=]+)=(.*)$/: ${\1:=\2}\nexport \1/' "$APACHE_ENVVARS" 
 
 RUN a2dissite 000-default \
     && a2ensite default \
-    && a2enmod rewrite deflate headers 
+    && a2enmod rewrite deflate headers
 
 #-------------------------------------------------------------------------------
 # Run Environment
 #-------------------------------------------------------------------------------
 
 VOLUME ["/var/www/html", "/var/lib/mysql"]
-EXPOSE 80 9001 3306
+EXPOSE 80 9001 3306 10001
 WORKDIR /var/www/html
 RUN chmod 755 /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
