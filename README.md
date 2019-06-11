@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/appkr/lamp-base.svg?branch=master)](https://travis-ci.org/appkr/lamp-base)
+[![Build Status](https://travis-ci.org/appkr/lamp-base.svg?branch=master)](https://travis-ci.org/appkr/lamp-base) [![Docker build](https://img.shields.io/docker/build/appkr/lamp-base.svg)](https://hub.docker.com/r/appkr/lamp-base) [![Docker downloads](https://img.shields.io/docker/pulls/appkr/lamp-base.svg)](https://hub.docker.com/r/appkr/lamp-base)
 
 # LAMP Base Docker Image
 
