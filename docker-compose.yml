@@ -1,0 +1,48 @@
+# For v3 docker-compose spec, @see https://docs.docker.com/compose/compose-file/
+version: '3'
+
+services:
+
+  mysql:
+    image: mysql:5.7
+    container_name: mysql
+    volumes:
+      - $PWD/mysql_data:/var/lib/mysql/
+#      - $PWD/your_init_script.sql:/docker-entrypoint-initdb.d/init.sql
+    environment:
+      - MYSQL_USER=root
+      - MYSQL_ROOT_PASSWORD=secret
+    ports:
+      - 3306:3306
+    command: mysqld --skip-ssl --character_set_server=utf8mb4 --lower_case_table_names=1
+    healthcheck:
+      test: mysql -uroot -psecret -e 'SELECT 1' || exit 1
+      interval: 60s
+
+  redis:
+    image: redis:6.2
+    container_name: redis
+    ports:
+      - 6379:6379
+    healthcheck:
+      test: redis-cli info stats || exit 1
+      interval: 60s
+
+  web:
+    build:
+      context: $PWD
+      args:
+        - PHP_VERSION=7.1-apache
+    image: web:latest
+    container_name: web
+    environment: {}
+    ports:
+      - 8000:80
+    volumes:
+      - $PWD/html:/var/www/html
+      - $HOME/.composer:/composer
+    depends_on:
+      - mysql
+    healthcheck:
+      test: curl -s http://localhost || exit 1
+      interval: 60s
