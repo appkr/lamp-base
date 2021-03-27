@@ -1,4 +1,4 @@
-ARG PHP_VERSION=7.0-apache
+ARG PHP_VERSION=7.2-apache
 
 FROM php:$PHP_VERSION
 
@@ -18,12 +18,11 @@ RUN apt update &&\
         supervisor \
         zlib1g-dev &&\
     docker-php-source extract &&\
-    docker-php-ext-install mcrypt &&\
     docker-php-ext-install gd &&\
     docker-php-ext-install pdo &&\
     docker-php-ext-install pdo_mysql &&\
     docker-php-ext-install zip &&\
-    docker-php-ext-enable mcrypt gd pdo pdo_mysql zip &&\
+    docker-php-ext-enable gd pdo pdo_mysql zip &&\
     docker-php-source delete &&\
     apt clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
