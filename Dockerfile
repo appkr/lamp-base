@@ -1,4 +1,4 @@
-ARG PHP_VERSION=7.3-apache
+ARG PHP_VERSION=7.4-apache
 
 FROM php:$PHP_VERSION
 
@@ -32,7 +32,7 @@ RUN a2dissite 000-default && a2ensite server && a2enmod rewrite deflate headers 
     bash -c "source /etc/apache2/envvars"
 
 RUN pecl channel-update pecl.php.net && \
-    pecl install xdebug-2.7.1
+    pecl install xdebug
 
 RUN php -r "readfile('https://getcomposer.org/installer');" | php -- --install-dir=/usr/local/bin/ &&\
     mv /usr/local/bin/composer.phar /usr/local/bin/composer

@@ -32,7 +32,7 @@ services:
     build:
       context: $PWD
       args:
-        - PHP_VERSION=7.3-apache
+        - PHP_VERSION=7.4-apache
     image: web:latest
     container_name: web
     environment: {}
